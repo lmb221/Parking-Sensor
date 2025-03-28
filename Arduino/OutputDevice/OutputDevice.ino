@@ -1,5 +1,5 @@
 // YWROBOT 
-// Compatible with the Arduino IDE 1.0
+// Compatible with the Ardusino IDE 1.0
 // Library version: 1.1
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -20,7 +20,7 @@ const char WIFI_SSID[] = "My Son Alexander";
 const char WIFI_PASSWORD[] = "P455word!";
 // const char WIFI_SSID[] = "lehigh-guest";
 // String POST = "http://192.168.4.84:5000/post";
-String GET = "http://192.168.4.84:5000/get";
+String GET = "http://192.168.4.96:5000/get";
 // String POST = "http://172.31.64.100:5000/post";
 // String GET = "http://172.31.64.100:5000/get";
 
@@ -52,13 +52,13 @@ void processData(String payload) {
 
     // Categorize keys based on their values
     if (value.endsWith("S")) {
-      if (value.startsWith("1")) {
+      if (value.startsWith("0")) {
         s_open[s_open_count++] = key;
       } else {
         s_closed[s_closed_count++] = key;
       }
     } else if (value.endsWith("H")) {
-      if (value.startsWith("1")) {
+      if (value.startsWith("0")) {
         h_open[h_open_count++] = key;
       } else {
         h_closed[h_closed_count++] = key;
@@ -118,17 +118,24 @@ String receive() {
 void setup() {
   Serial.begin(115200); 
   pinMode(pirPin, INPUT);
+  lcd.init();  // initialize the LCD
+  lcd.backlight();
+  // Example initial display message:
+  lcd.setCursor(0, 0);
+  lcd.print("Never fear,");
   // Set WiFi to station mode and disconnect from any previous AP.
   WiFi.disconnect();
   WiFi.mode(WIFI_STA);
   // Lehigh Wifi
-  WiFi.begin(WIFI_SSID);
+  // WiFi.begin(WIFI_SSID);
   //normal wifi 
-  // WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.println("Connecting");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("waiting");
   }
   Serial.println("");
   Serial.print("Connected to WiFi network with IP Address: ");
@@ -137,16 +144,13 @@ void setup() {
 
   Serial.println("Setup done");
 
-  lcd.init();  // initialize the LCD
-  lcd.backlight();
-  // Example initial display message:
-  lcd.setCursor(0, 0);
-  lcd.print("Never fear,");
+
 }
 
 void loop() {
   // Receive data from the server and process it
   receive();
   // Wait before scanning again
-  delay(5000);
+  delay(2500);
+  delay(2500);
 }
